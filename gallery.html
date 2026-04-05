@@ -259,37 +259,71 @@
 
 <body class="text-slate-900">
 
- <nav class="sticky top-0 z-50 w-full bg-white/80 backdrop-blur-md border-b border-gray-100">
-  <div class="max-w-7xl mx-auto px-6 h-20 flex items-center justify-between">
+<nav class="sticky top-0 z-50 w-full bg-white/80 backdrop-blur-md border-b border-gray-100">
+  <div class="max-w-7xl mx-auto px-4 md:px-6 h-20 flex items-center justify-between">
 
     <!-- LOGO -->
-    <div class="logo text-2xl font-bold tracking-tight text-slate-900">
+    <div class="logo text-lg sm:text-2xl font-bold tracking-tight text-slate-900 leading-none">
       CUSTOMER<span class="text-amber-500">FIRST</span>
-      <span class="font-light text-slate-400 text-lg uppercase tracking-widest ml-2">Transport</span>
+      <span class="hidden sm:inline font-light text-slate-400 text-sm uppercase tracking-widest ml-2">Transport</span>
     </div>
 
-    <!-- NAV LINKS -->
+    <!-- DESKTOP NAV -->
     <div class="hidden md:flex space-x-10 font-medium text-sm uppercase tracking-wide">
-      <a href="index.html#home" class="hover:text-amber-600 transition-colors">Home</a>
-      <a href="index.html#about" class="hover:text-amber-600 transition-colors">About</a>
-      <a href="index.html#services" class="hover:text-amber-600 transition-colors">Services</a>
-      <a href="index.html#projects" class="hover:text-amber-600 transition-colors">Projects</a>
-      <a href="index.html#contact" class="hover:text-amber-600 transition-colors">Contact</a>
+      <a href="index.html#home" class="hover:text-amber-600">Home</a>
+      <a href="index.html#about" class="hover:text-amber-600">About</a>
+      <a href="index.html#services" class="hover:text-amber-600">Services</a>
+      <a href="index.html#projects" class="hover:text-amber-600">Projects</a>
+      <a href="index.html#contact" class="hover:text-amber-600">Contact</a>
     </div>
 
     <!-- RIGHT SIDE -->
-    <div class="flex items-center gap-4">
-      <a href="index.html" class="text-sm font-medium text-slate-500 hover:text-amber-600 transition-colors">
+    <div class="flex items-center gap-3">
+
+      <!-- BACK (always visible) -->
+      <a href="index.html" class="text-xs sm:text-sm font-medium text-slate-500 hover:text-amber-600">
         ← Back
       </a>
 
-      <a href="index.html#contact" class="hidden md:block bg-slate-900 text-white px-6 py-2.5 rounded-full text-sm font-semibold hover:bg-amber-500 transition-all shadow-lg hover:shadow-amber-500/20">
+      <!-- DESKTOP CTA -->
+      <a href="index.html#contact" class="hidden md:block bg-slate-900 text-white px-6 py-2.5 rounded-full text-sm font-semibold hover:bg-amber-500 transition">
         Get a Quote
       </a>
+
+      <!-- MOBILE MENU BUTTON -->
+      <button id="menuBtn" class="md:hidden w-10 h-10 flex items-center justify-center border rounded-lg">
+        ☰
+      </button>
     </div>
 
   </div>
+
+  <!-- MOBILE MENU -->
+  <div id="mobileMenu" class="hidden md:hidden bg-white border-t">
+    <div class="flex flex-col px-6 py-4 space-y-4 text-sm font-medium uppercase">
+
+      <a href="index.html#home">Home</a>
+      <a href="index.html#about">About</a>
+      <a href="index.html#services">Services</a>
+      <a href="index.html#projects">Projects</a>
+      <a href="index.html#contact">Contact</a>
+
+      <a href="index.html#contact" class="bg-slate-900 text-white text-center py-3 rounded-xl">
+        Get a Quote
+      </a>
+
+    </div>
+  </div>
 </nav>
+
+<script>
+  const btn = document.getElementById('menuBtn');
+  const menu = document.getElementById('mobileMenu');
+
+  btn.addEventListener('click', () => {
+    menu.classList.toggle('hidden');
+  });
+</script>
 
   <header class="max-w-4xl mx-auto text-center py-20 px-6">
     <span class="text-blue-600 font-semibold tracking-widest text-xs uppercase">Our Portfolio</span>
