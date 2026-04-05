@@ -1,0 +1,592 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Gallery | Customer First Transport</title>
+
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Lexend:wght@500;700;800&display=swap" rel="stylesheet">
+
+  <style>
+    body { font-family: 'Inter', sans-serif; }
+        h1, h2, h3, .logo { font-family: 'Lexend', sans-serif; }
+        .accent-gradient { background: linear-gradient(135deg, #fbbf24 0%, #f59e0b 100%); }
+        .navy-dark { background-color: #0f172a; }
+    :root {
+      --primary: #f59e0b;
+      --primary-dark: #fbbf24;
+    }
+
+    
+
+    h1, h2, h3 {
+      font-family: 'Lexend', sans-serif;
+    }
+
+    .project-card {
+      transition: all 0.3s ease;
+    }
+
+    .project-card:hover {
+      transform: translateY(-4px);
+    }
+
+    .before-after {
+      position: relative;
+      overflow: hidden;
+      border-radius: 1rem;
+      height: 400px;
+      box-shadow: 0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1);
+      cursor: ew-resize;
+      background: #0f172a;
+    }
+
+    .before-after img {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      pointer-events: none;
+      user-select: none;
+    }
+
+    .ba-after-img {
+      clip-path: inset(0 0 0 50%);
+      z-index: 2;
+    }
+
+    .ba-label {
+      position: absolute;
+      bottom: 1rem;
+      padding: 0.25rem 0.75rem;
+      background: rgba(0, 0, 0, 0.6);
+      backdrop-filter: blur(4px);
+      color: white;
+      font-size: 0.75rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      border-radius: 0.5rem;
+      letter-spacing: 0.05em;
+      z-index: 10;
+    }
+
+    .label-before { left: 1rem; }
+    .label-after { right: 1rem; }
+
+    .ba-divider {
+      position: absolute;
+      top: 0;
+      bottom: 0;
+      left: 50%;
+      width: 3px;
+      background: white;
+      z-index: 20;
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
+      transform: translateX(-50%);
+    }
+
+    .ba-handle {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      width: 48px;
+      height: 48px;
+      border-radius: 9999px;
+      background: white;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+      z-index: 30;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--primary);
+      transition: transform 0.2s ease;
+      pointer-events: none;
+    }
+
+    .before-after:hover .ba-handle {
+      transform: translate(-50%, -50%) scale(1.08);
+    }
+
+    .ba-range {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      opacity: 0;
+      z-index: 40;
+      cursor: ew-resize;
+    }
+
+    .single-image-wrap {
+      position: relative;
+      overflow: hidden;
+      border-radius: 1rem;
+      height: 400px;
+      box-shadow: 0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1);
+      background: #e2e8f0;
+      cursor: pointer;
+    }
+
+    .single-image-wrap img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      transition: transform 0.4s ease;
+      display: block;
+    }
+
+    .single-image-wrap:hover img {
+      transform: scale(1.03);
+    }
+
+    .single-image-badge {
+      position: absolute;
+      bottom: 1rem;
+      left: 1rem;
+      background: rgba(0, 0, 0, 0.6);
+      backdrop-filter: blur(4px);
+      color: white;
+      font-size: 0.75rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      border-radius: 0.5rem;
+      padding: 0.35rem 0.8rem;
+    }
+
+    .lightbox {
+      position: fixed;
+      inset: 0;
+      background: rgba(2, 6, 23, 0.92);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      z-index: 9999;
+      padding: 2rem;
+    }
+
+    .lightbox.open {
+      display: flex;
+    }
+
+    .lightbox-content {
+      position: relative;
+      max-width: 1100px;
+      width: 100%;
+      max-height: 90vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .lightbox-image {
+      max-width: 100%;
+      max-height: 90vh;
+      border-radius: 1rem;
+      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.35);
+      object-fit: contain;
+      background: white;
+    }
+
+    .lightbox-btn {
+      position: absolute;
+      background: rgba(255,255,255,0.14);
+      color: white;
+      border: 1px solid rgba(255,255,255,0.18);
+      width: 48px;
+      height: 48px;
+      border-radius: 9999px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.25rem;
+      backdrop-filter: blur(6px);
+      cursor: pointer;
+    }
+
+    .lightbox-close {
+      top: -0.75rem;
+      right: -0.75rem;
+    }
+
+    .lightbox-prev {
+      left: -4.5rem;
+      top: 50%;
+      transform: translateY(-50%);
+    }
+
+    .lightbox-next {
+      right: -4.5rem;
+      top: 50%;
+      transform: translateY(-50%);
+    }
+
+    .lightbox-caption {
+      position: absolute;
+      left: 0;
+      right: 0;
+      bottom: -3rem;
+      text-align: center;
+      color: #e2e8f0;
+      font-size: 0.95rem;
+      font-weight: 500;
+    }
+
+    @media (max-width: 900px) {
+      .lightbox-prev {
+        left: 0.5rem;
+      }
+
+      .lightbox-next {
+        right: 0.5rem;
+      }
+
+      .lightbox-close {
+        top: 0.5rem;
+        right: 0.5rem;
+      }
+
+      .lightbox-caption {
+        bottom: -2.2rem;
+        font-size: 0.85rem;
+      }
+    }
+  </style>
+</head>
+
+<body class="text-slate-900">
+
+ <nav class="sticky top-0 z-50 w-full bg-white/80 backdrop-blur-md border-b border-gray-100">
+  <div class="max-w-7xl mx-auto px-6 h-20 flex items-center justify-between">
+
+    <!-- LOGO -->
+    <div class="logo text-2xl font-bold tracking-tight text-slate-900">
+      CUSTOMER<span class="text-amber-500">FIRST</span>
+      <span class="font-light text-slate-400 text-lg uppercase tracking-widest ml-2">Transport</span>
+    </div>
+
+    <!-- NAV LINKS -->
+    <div class="hidden md:flex space-x-10 font-medium text-sm uppercase tracking-wide">
+      <a href="index.html#home" class="hover:text-amber-600 transition-colors">Home</a>
+      <a href="index.html#about" class="hover:text-amber-600 transition-colors">About</a>
+      <a href="index.html#services" class="hover:text-amber-600 transition-colors">Services</a>
+      <a href="index.html#projects" class="hover:text-amber-600 transition-colors">Projects</a>
+      <a href="index.html#contact" class="hover:text-amber-600 transition-colors">Contact</a>
+    </div>
+
+    <!-- RIGHT SIDE -->
+    <div class="flex items-center gap-4">
+      <a href="index.html" class="text-sm font-medium text-slate-500 hover:text-amber-600 transition-colors">
+        ← Back
+      </a>
+
+      <a href="index.html#contact" class="hidden md:block bg-slate-900 text-white px-6 py-2.5 rounded-full text-sm font-semibold hover:bg-amber-500 transition-all shadow-lg hover:shadow-amber-500/20">
+        Get a Quote
+      </a>
+    </div>
+
+  </div>
+</nav>
+
+  <header class="max-w-4xl mx-auto text-center py-20 px-6">
+    <span class="text-blue-600 font-semibold tracking-widest text-xs uppercase">Our Portfolio</span>
+    <h1 class="text-4xl md:text-5xl font-bold mt-4 tracking-tight text-slate-900">Proven Results.</h1>
+    <p class="text-lg text-slate-500 mt-6 leading-relaxed">
+      From retail cleanouts to debris removal and hauling support, here are examples of the work.
+      Drag sliders where available, or click any image to view fullscreen.
+    </p>
+  </header>
+
+  <section class="max-w-7xl mx-auto px-6 pb-32">
+    <div class="grid md:grid-cols-2 gap-12">
+
+      <!-- BEFORE / AFTER CARD -->
+      <div class="project-card group">
+        <div class="before-after" data-before-after>
+          <span class="ba-label label-before">Before</span>
+          <span class="ba-label label-after">After</span>
+
+          <img src="images/before 4.jpeg" alt="Retail cleanout before" data-lightbox-src="images/before 4.jpeg" data-lightbox-caption="Retail Cleanout — Before">
+          <img src="images/after 4.jpeg" class="ba-after-img" data-after alt="Retail cleanout after" data-lightbox-src="images/after 4.jpeg" data-lightbox-caption="Retail Cleanout — After">
+
+          <div class="ba-divider" data-divider></div>
+          <div class="ba-handle" data-handle>
+            <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+              <path d="m18 8 4 4-4 4M6 8l-4 4 4 4"/>
+            </svg>
+          </div>
+          <input type="range" min="0" max="100" value="50" class="ba-range" data-range>
+        </div>
+
+        <div class="mt-6 flex justify-between items-start gap-4">
+          <div>
+            <h3 class="text-xl font-bold text-slate-900">Full Retail Cleanout</h3>
+            <p class="text-slate-500 text-sm mt-1">Commercial space clearing & haul-away</p>
+          </div>
+          <span class="bg-emerald-100 text-emerald-700 text-[10px] font-bold px-2 py-1 rounded uppercase tracking-wider">Completed</span>
+        </div>
+      </div>
+
+      <!-- BEFORE / AFTER CARD -->
+      <div class="project-card group">
+        <div class="before-after" data-before-after>
+          <span class="ba-label label-before">Before</span>
+          <span class="ba-label label-after">After</span>
+
+          <img src="images/before 3.jpeg" alt="Debris before" data-lightbox-src="images/before 3.jpeg" data-lightbox-caption="Post-Construction Debris — Before">
+          <img src="images/after 3.jpeg" class="ba-after-img" data-after alt="Debris after" data-lightbox-src="images/after 3.jpeg" data-lightbox-caption="Post-Construction Debris — After">
+
+          <div class="ba-divider" data-divider></div>
+          <div class="ba-handle" data-handle>
+            <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+              <path d="m18 8 4 4-4 4M6 8l-4 4 4 4"/>
+            </svg>
+          </div>
+          <input type="range" min="0" max="100" value="50" class="ba-range" data-range>
+        </div>
+
+        <div class="mt-6 flex justify-between items-start gap-4">
+          <div>
+            <h3 class="text-xl font-bold text-slate-900">Post-Construction Debris</h3>
+            <p class="text-slate-500 text-sm mt-1">Site cleanup for commercial or residential development</p>
+          </div>
+          <span class="bg-emerald-100 text-emerald-700 text-[10px] font-bold px-2 py-1 rounded uppercase tracking-wider">Completed</span>
+        </div>
+      </div>
+
+      <!-- NORMAL IMAGE CARD -->
+      <div class="project-card group">
+        <div class="single-image-wrap lightbox-trigger" data-lightbox-src="images/hauling 3.jpeg" data-lightbox-caption="General Hauling Job">
+          <img src="images/hauling 3.jpeg" alt="General hauling job">
+          <span class="single-image-badge">Project</span>
+        </div>
+
+        <div class="mt-6 flex justify-between items-start gap-4">
+          <div>
+            <h3 class="text-xl font-bold text-slate-900">General Hauling Job</h3>
+            <p class="text-slate-500 text-sm mt-1">Single-image project highlight</p>
+          </div>
+          <span class="bg-blue-100 text-blue-700 text-[10px] font-bold px-2 py-1 rounded uppercase tracking-wider">Completed</span>
+        </div>
+      </div>
+
+      <!-- NORMAL IMAGE CARD -->
+      <div class="project-card group">
+        <div class="single-image-wrap lightbox-trigger" data-lightbox-src="images/cleaning.jpeg" data-lightbox-caption="On-Site Cleanup Support">
+          <img src="images/cleaning.jpeg" alt="On-site cleanup support">
+          <span class="single-image-badge">Project</span>
+        </div>
+
+        <div class="mt-6 flex justify-between items-start gap-4">
+          <div>
+            <h3 class="text-xl font-bold text-slate-900">On-Site Cleanup Support</h3>
+            <p class="text-slate-500 text-sm mt-1">Single-image gallery card with fullscreen view</p>
+          </div>
+          <span class="bg-blue-100 text-blue-700 text-[10px] font-bold px-2 py-1 rounded uppercase tracking-wider">Completed</span>
+        </div>
+      </div>
+         <div class="project-card group">
+        <div class="single-image-wrap lightbox-trigger" data-lightbox-src="images/h3.jpeg" data-lightbox-caption="On-Site Cleanup Support">
+          <img src="images/h3.jpeg" alt="On-site cleanup support">
+          <span class="single-image-badge">Project</span>
+        </div>
+
+        <div class="mt-6 flex justify-between items-start gap-4">
+          <div>
+            <h3 class="text-xl font-bold text-slate-900">On-Site Cleanup Support</h3>
+            <p class="text-slate-500 text-sm mt-1">Single-image gallery card with fullscreen view</p>
+          </div>
+          <span class="bg-blue-100 text-blue-700 text-[10px] font-bold px-2 py-1 rounded uppercase tracking-wider">Completed</span>
+        </div>
+      </div>
+         <div class="project-card group">
+        <div class="single-image-wrap lightbox-trigger" data-lightbox-src="images/h2.jpeg" data-lightbox-caption="On-Site Cleanup Support">
+          <img src="images/h2.jpeg" alt="On-site cleanup support">
+          <span class="single-image-badge">Project</span>
+        </div>
+
+        <div class="mt-6 flex justify-between items-start gap-4">
+          <div>
+            <h3 class="text-xl font-bold text-slate-900">On-Site Cleanup Support</h3>
+            <p class="text-slate-500 text-sm mt-1">Single-image gallery card with fullscreen view</p>
+          </div>
+          <span class="bg-blue-100 text-blue-700 text-[10px] font-bold px-2 py-1 rounded uppercase tracking-wider">Completed</span>
+        </div>
+      </div>
+    </div>
+    
+  </section>
+
+     <footer class="bg-white border-t border-slate-100 pt-20 pb-10">
+    <div class="max-w-7xl mx-auto px-6">
+        <div class="flex flex-col lg:flex-row justify-between gap-12 pb-16">
+            
+            <div class="max-w-sm">
+                <div class="flex items-center gap-2 group cursor-default">
+                    <div class="w-8 h-8 bg-slate-900 rounded-lg flex items-center justify-center text-white font-bold transition-colors group-hover:bg-amber-500">C</div>
+                    <span class="font-bold text-xl tracking-tight text-slate-900">
+                        CUSTOMER<span class="text-amber-500">FIRST</span>
+                    </span>
+                </div>
+                <p class="mt-6 text-slate-500 leading-relaxed text-sm">
+                    Premium hauling and transport solutions. We specialize in commercial site cleanups and rapid debris removal across the region.
+                </p>
+            </div>
+
+            <div class="grid grid-cols-2 sm:grid-cols-3 gap-10 md:gap-20">
+                <div class="flex flex-col gap-4">
+                    <span class="text-[10px] font-bold uppercase tracking-[0.2em] text-slate-400">Navigation</span>
+                    <a href="#about" class="text-sm font-medium text-slate-600 hover:text-amber-600 transition-colors">Our Story</a>
+                    <a href="#services" class="text-sm font-medium text-slate-600 hover:text-amber-600 transition-colors">Services</a>
+                    <a href="#projects" class="text-sm font-medium text-slate-600 hover:text-amber-600 transition-colors">Gallery</a>
+                </div>
+                <div class="flex flex-col gap-4">
+                    <span class="text-[10px] font-bold uppercase tracking-[0.2em] text-slate-400">Legal</span>
+                    <a href="#" class="text-sm font-medium text-slate-600 hover:text-amber-600 transition-colors">Privacy Policy</a>
+                    <a href="#" class="text-sm font-medium text-slate-600 hover:text-amber-600 transition-colors">Terms of Service</a>
+                </div>
+                <div class="flex flex-col gap-4">
+                    <span class="text-[10px] font-bold uppercase tracking-[0.2em] text-slate-400">Support</span>
+                    <a href="mailto:info@cfirsttransport.com" class="text-sm font-medium text-slate-600 hover:text-amber-600 transition-colors">Contact Us</a>
+                    <p class="text-[11px] text-slate-400 mt-2 italic"></p>
+                </div>
+            </div>
+        </div>
+
+        <div class="pt-8 border-t border-slate-100 flex flex-col md:flex-row justify-between items-center gap-6">
+            <div class="flex items-center gap-4">
+                <div class="h-1 w-1 bg-slate-300 rounded-full"></div>
+                <span class="text-xs font-medium text-slate-400 tracking-wide uppercase"></span>
+            </div>
+            
+            <div class="text-[11px] font-medium text-slate-400 uppercase tracking-widest text-center mx-auto">
+                © 2026 Customer First Transport <span class="mx-2 text-slate-200"></span> 
+            </div>
+        </div>
+    </div>
+</footer>
+
+  <!-- LIGHTBOX -->
+  <div id="lightbox" class="lightbox" aria-hidden="true">
+    <div class="lightbox-content">
+      <button class="lightbox-btn lightbox-close" id="lightboxClose" aria-label="Close">✕</button>
+      <button class="lightbox-btn lightbox-prev" id="lightboxPrev" aria-label="Previous">←</button>
+      <img id="lightboxImage" class="lightbox-image" src="" alt="Fullscreen gallery image">
+      <button class="lightbox-btn lightbox-next" id="lightboxNext" aria-label="Next">→</button>
+      <div id="lightboxCaption" class="lightbox-caption"></div>
+    </div>
+  </div>
+
+  <script>
+    // Before / after sliders
+    document.querySelectorAll('[data-before-after]').forEach(slider => {
+      const range = slider.querySelector('[data-range]');
+      const after = slider.querySelector('[data-after]');
+      const divider = slider.querySelector('[data-divider]');
+      const handle = slider.querySelector('[data-handle]');
+
+      function update(v) {
+        after.style.clipPath = `inset(0 0 0 ${v}%)`;
+        divider.style.left = v + '%';
+        handle.style.left = v + '%';
+      }
+
+      update(range.value);
+      range.addEventListener('input', e => update(e.target.value));
+    });
+
+    // Build gallery items list
+    const galleryItems = [];
+
+    document.querySelectorAll('.lightbox-trigger').forEach(item => {
+      galleryItems.push({
+        src: item.dataset.lightboxSrc,
+        caption: item.dataset.lightboxCaption || ''
+      });
+    });
+
+    document.querySelectorAll('[data-before-after]').forEach(slider => {
+      const imgs = slider.querySelectorAll('[data-lightbox-src]');
+      imgs.forEach(img => {
+        galleryItems.push({
+          src: img.dataset.lightboxSrc,
+          caption: img.dataset.lightboxCaption || img.alt || ''
+        });
+      });
+    });
+
+    const lightbox = document.getElementById('lightbox');
+    const lightboxImage = document.getElementById('lightboxImage');
+    const lightboxCaption = document.getElementById('lightboxCaption');
+    const lightboxClose = document.getElementById('lightboxClose');
+    const lightboxPrev = document.getElementById('lightboxPrev');
+    const lightboxNext = document.getElementById('lightboxNext');
+
+    let currentIndex = 0;
+
+    function openLightbox(index) {
+      currentIndex = index;
+      lightboxImage.src = galleryItems[currentIndex].src;
+      lightboxCaption.textContent = galleryItems[currentIndex].caption;
+      lightbox.classList.add('open');
+      lightbox.setAttribute('aria-hidden', 'false');
+      document.body.style.overflow = 'hidden';
+    }
+
+    function closeLightbox() {
+      lightbox.classList.remove('open');
+      lightbox.setAttribute('aria-hidden', 'true');
+      document.body.style.overflow = '';
+    }
+
+    function showPrev() {
+      currentIndex = (currentIndex - 1 + galleryItems.length) % galleryItems.length;
+      lightboxImage.src = galleryItems[currentIndex].src;
+      lightboxCaption.textContent = galleryItems[currentIndex].caption;
+    }
+
+    function showNext() {
+      currentIndex = (currentIndex + 1) % galleryItems.length;
+      lightboxImage.src = galleryItems[currentIndex].src;
+      lightboxCaption.textContent = galleryItems[currentIndex].caption;
+    }
+
+    // Open single-image cards
+    document.querySelectorAll('.lightbox-trigger').forEach(item => {
+      item.addEventListener('click', () => {
+        const src = item.dataset.lightboxSrc;
+        const index = galleryItems.findIndex(g => g.src === src);
+        if (index !== -1) openLightbox(index);
+      });
+    });
+
+    // Open before/after images on click
+    document.querySelectorAll('[data-before-after]').forEach(slider => {
+      slider.addEventListener('dblclick', () => {
+        const beforeImg = slider.querySelector('img[data-lightbox-src]');
+        const src = beforeImg.dataset.lightboxSrc;
+        const index = galleryItems.findIndex(g => g.src === src);
+        if (index !== -1) openLightbox(index);
+      });
+    });
+
+    lightboxClose.addEventListener('click', closeLightbox);
+    lightboxPrev.addEventListener('click', showPrev);
+    lightboxNext.addEventListener('click', showNext);
+
+    lightbox.addEventListener('click', (e) => {
+      if (e.target === lightbox) closeLightbox();
+    });
+
+    document.addEventListener('keydown', (e) => {
+      if (!lightbox.classList.contains('open')) return;
+      if (e.key === 'Escape') closeLightbox();
+      if (e.key === 'ArrowLeft') showPrev();
+      if (e.key === 'ArrowRight') showNext();
+    });
+  </script>
+</body>
+</html>
